@@ -1,0 +1,5 @@
+
+*.pyc
+lib/yaes.egg-info/
+dep/
+docs/build
