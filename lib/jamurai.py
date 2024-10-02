@@ -84,7 +84,7 @@ class Machine:
         """
         Gets the relative path based on base and whether source or destnation
         """
-        return path.split(self.base, 1)[-1].split("/", 2)[-1]
+        return path.split(f"{self.base}/", 1)[-1]
 
     def source(self, content, path=False):
         """
@@ -94,9 +94,9 @@ class Machine:
         if isinstance(content['source'], dict):
             return content['source']['value']
 
-        source = os.path.abspath(f"{self.base}/source/{content['source']}")
+        source = os.path.abspath(f"{self.base}/{content['source']}")
 
-        if not source.startswith(f"{self.base}/source"):
+        if not source.startswith(f"{self.base}"):
             raise Exception(f"invalid path: {source}")
 
         if path:
@@ -110,9 +110,9 @@ class Machine:
         Retrieve or store the content of a destination file
         """
 
-        destination = os.path.abspath(f"{self.base}/destination/{content['destination']}")
+        destination = os.path.abspath(f"{self.base}/{content['destination']}")
 
-        if not destination.startswith(f"{self.base}/destination"):
+        if not destination.startswith(f"{self.base}"):
             raise Exception(f"invalid path: {destination}")
 
         if path:
