@@ -1,0 +1,10 @@
+LICENSE.txt
+README.rst
+setup.py
+lib/jamurai.py
+lib/jamurai.egg-info/PKG-INFO
+lib/jamurai.egg-info/SOURCES.txt
+lib/jamurai.egg-info/dependency_links.txt
+lib/jamurai.egg-info/requires.txt
+lib/jamurai.egg-info/top_level.txt
+test/test_jamurai.py
