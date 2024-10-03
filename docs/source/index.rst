@@ -14,34 +14,211 @@ jamurai
 
 .. module:: jamurai
 
+Jijna wrapper for file and directory transformation and injection
+
+As a single content::
+
+    import os
+    import yaml
+    import jamurai
+
+    with open("/tmp/from.txt", "w") as from_file:
+        from_file.write("{{ foo }}")
+
+    content = {
+        "source": "from.txt",
+        "destination": "to.txt"
+    }
+
+    values = {
+        "foo": "bar"
+    }
+
+    jamurai.build(content, values, "/tmp")
+
+    with open("/tmp/to.txt", "r") as to_file:
+        data = to_file.read()
+
+    data
+    # "bar"
+
+For multiple content::
+
+    machine = jamurai.Machine("/tmp")
+
+    with open("/tmp/this.txt", "w") as from_file:
+        from_file.write("{{ this }}")
+
+    with open("/tmp/that.txt", "w") as from_file:
+        from_file.write("{{ that }}")
+
+    contents = [
+        {
+            "source": "this.txt",
+            "destination": "these.txt"
+        },
+        {
+            "source": "that.txt",
+            "destination": "those.txt"
+        }
+    ]
+
+    values = {
+        "this": "yin",
+        "that": "yang"
+    }
+
+    for content in contents:
+        machine.build(content, values)
+
+    with open("/tmp/these.txt", "r") as to_file:
+        data = to_file.read()
+
+    data
+    # "yin"
+
+    with open("/tmp/those.txt", "r") as to_file:
+        data = to_file.read()
+
+    data
+    # "yang"
+
+Look at the content docs at the 'CnC Forge https://github.com/gaf3/cnc-forge/blob/main/Output.md#content'_
+
+The only difference is the base is the same direcctory unlike transforming from one repo to enother.
+
 .. function:: build(content, values, base='', skip=None, inject='jamurai', engine=None)
 
-    Bulids from a content
+    Builds a content block
 
-    :param content:
-    :param values:
-    :param base:
-    :param skip:
-    :param inject:
-    :param engine:
+    :param content: What to transform, so
+    :type content: dict
+    :param values: Yaes engine to use instead of the default
+    :type values: dict
+    :param base: base directory to transform files
+    :type base: yaes.Engine
+    :param skip: list of files to skip for processing
+    :type skip: list
+    :param inject: keyword to inject text at (text:)
+    :param engine: Yaes engine to use instead of the default
+
+    **Usage**
+
+
+    To process a single content block::
+
+        import os
+        import yaml
+        import jamurai
+
+        with open("/tmp/from.txt", "w") as from_file:
+            from_file.write("{{ foo }}")
+
+        content = {
+            "source": "from.txt",
+            "destination": "to.txt"
+        }
+
+        values = {
+            "foo": "bar"
+        }
+
+        jamurai.build(content, values, "/tmp")
+
+        with open("/tmp/to.txt", "r") as to_file:
+            data = to_file.read()
+
+        data
+        # "bar"
 
 .. class:: Machine(base='', skip=None, inject='jamurai', engine=None)
 
-    Class that processes the transformation
+    Class for Jijna wrapper for file and directory transformation and injection
 
-    Store the daemon
+    :param base: base directory to transform files
+    :type base: yaes.Engine
+    :param skip: list of files to skip for processing
+    :type skip: list
+    :param inject: keyword to inject text at (text:)
+    :param engine: Yaes engine to use instead of the default
 
-    :param base:
-    :param skip:
-    :param inject:
-    :param engine:
+    .. attribute:: base
+        :type: str
+
+        base directory to transform files
+
+    .. attribute:: engine
+        :type: yaes.Engine
+
+        Yaes engine to use
+
+    .. attribute:: inject
+        :type: str
+
+        keyword to inject text at (text:)
+
+    .. attribute:: skip
+        :type: list
+
+        list of files to skip for processing
 
     .. method:: build(content, values)
 
-        Bulids from a content
+        Builds a content block
 
-        :param content:
-        :param values:
+        :param content: What to transform, so
+        :type content: dict
+        :param values: Yaes engine to use instead of the default
+        :type values: dict
+
+        **Usage**
+
+
+        For multiple content::
+
+            import os
+            import yaml
+            import jamurai
+
+
+            machine = jamurai.Machine("/tmp")
+
+            with open("/tmp/this.txt", "w") as from_file:
+                from_file.write("{{ this }}")
+
+            with open("/tmp/that.txt", "w") as from_file:
+                from_file.write("{{ that }}")
+
+            contents = [
+                {
+                    "source": "this.txt",
+                    "destination": "these.txt"
+                },
+                {
+                    "source": "that.txt",
+                    "destination": "those.txt"
+                }
+            ]
+
+            values = {
+                "this": "yin",
+                "that": "yang"
+            }
+
+            for content in contents:
+                machine.build(content, values)
+
+            with open("/tmp/these.txt", "r") as to_file:
+                data = to_file.read()
+
+            data
+            # "yin"
+
+            with open("/tmp/those.txt", "r") as to_file:
+                data = to_file.read()
+
+            data
+            # "yang"
 
     .. method:: copy(content)
 

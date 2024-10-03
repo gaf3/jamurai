@@ -6,6 +6,8 @@ import yaml
 
 import jamurai
 import jinja2
+import sphinxter.unittest
+
 
 class TestEngine(unittest.TestCase):
 
@@ -77,7 +79,7 @@ class TestEngine(unittest.TestCase):
 
         self.assertEqual(self.machine.source({"source": "stuff"}), "src")
 
-        mock_open.assert_called_once_with("/opt/service/cnc/sweat/stuff", "r")
+        mock_open.assert_called_once_with("/opt/service/cnc/sweat/stuff", "r", encoding='utf-8')
 
     @unittest.mock.patch("jamurai.open", create=True)
     @unittest.mock.patch("os.path.exists")
@@ -94,11 +96,11 @@ class TestEngine(unittest.TestCase):
 
         self.assertEqual(self.machine.destination({"destination": "things"}), "dest")
 
-        mock_open.assert_called_once_with("/opt/service/cnc/sweat/things", "r")
+        mock_open.assert_called_once_with("/opt/service/cnc/sweat/things", "r", encoding='utf-8')
 
         self.machine.destination({"destination": "things"}, "dest")
 
-        mock_open.assert_called_with("/opt/service/cnc/sweat/things", "w")
+        mock_open.assert_called_with("/opt/service/cnc/sweat/things", "w", encoding='utf-8')
         mock_write.write.assert_called_once_with("dest")
 
         mock_open.reset_mock()
@@ -107,7 +109,7 @@ class TestEngine(unittest.TestCase):
 
         self.machine.destination({"destination": "things", "replace": False}, "dest")
 
-        mock_open.assert_called_with("/opt/service/cnc/sweat/things", "w")
+        mock_open.assert_called_with("/opt/service/cnc/sweat/things", "w", encoding='utf-8')
         mock_write.write.assert_called_once_with("dest")
 
         mock_open.reset_mock()
@@ -846,7 +848,7 @@ class TestEngine(unittest.TestCase):
         }, {"start": "a/b"})
 
 
-class TestJamurai(unittest.TestCase):
+class TestJamurai(sphinxter.unittest.TestCase):
 
     @unittest.mock.patch("os.path.isdir")
     @unittest.mock.patch("glob.glob")
@@ -919,3 +921,7 @@ class TestJamurai(unittest.TestCase):
             "preserve": ["k"],
             "transform": ["l"]
         }, {"start": "a/b"})
+
+    def test_module(self):
+
+        self.assertSphinxter(jamurai)
