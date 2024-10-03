@@ -6,6 +6,8 @@ import yaml
 
 import jamurai
 import jinja2
+import sphinxter.unittest
+
 
 class TestEngine(unittest.TestCase):
 
@@ -60,7 +62,7 @@ class TestEngine(unittest.TestCase):
 
     def test_relative(self):
 
-        self.assertEqual(self.machine.relative("/opt/service/cnc/sweat/source/a/b/c"), "a/b/c")
+        self.assertEqual(self.machine.relative("/opt/service/cnc/sweat/a/b/c"), "a/b/c")
 
     @unittest.mock.patch("jamurai.open", create=True)
     def test_source(self, mock_open):
@@ -69,7 +71,7 @@ class TestEngine(unittest.TestCase):
 
         self.assertRaisesRegex(Exception, "invalid path: ..", self.machine.source, {"source": ".."})
 
-        self.assertEqual(self.machine.source({"source": "stuff"}, path=True), "/opt/service/cnc/sweat/source/stuff")
+        self.assertEqual(self.machine.source({"source": "stuff"}, path=True), "/opt/service/cnc/sweat/stuff")
 
         mock_open.side_effect = [
             unittest.mock.mock_open(read_data='src').return_value
@@ -77,7 +79,7 @@ class TestEngine(unittest.TestCase):
 
         self.assertEqual(self.machine.source({"source": "stuff"}), "src")
 
-        mock_open.assert_called_once_with("/opt/service/cnc/sweat/source/stuff", "r")
+        mock_open.assert_called_once_with("/opt/service/cnc/sweat/stuff", "r", encoding='utf-8')
 
     @unittest.mock.patch("jamurai.open", create=True)
     @unittest.mock.patch("os.path.exists")
@@ -85,7 +87,7 @@ class TestEngine(unittest.TestCase):
 
         self.assertRaisesRegex(Exception, "invalid path: ..", self.machine.destination, {"destination": ".."})
 
-        self.assertEqual(self.machine.destination({"destination": "things"}, path=True), "/opt/service/cnc/sweat/destination/things")
+        self.assertEqual(self.machine.destination({"destination": "things"}, path=True), "/opt/service/cnc/sweat/things")
 
         mock_read = unittest.mock.mock_open(read_data='dest').return_value
         mock_write = unittest.mock.mock_open().return_value
@@ -94,11 +96,11 @@ class TestEngine(unittest.TestCase):
 
         self.assertEqual(self.machine.destination({"destination": "things"}), "dest")
 
-        mock_open.assert_called_once_with("/opt/service/cnc/sweat/destination/things", "r")
+        mock_open.assert_called_once_with("/opt/service/cnc/sweat/things", "r", encoding='utf-8')
 
         self.machine.destination({"destination": "things"}, "dest")
 
-        mock_open.assert_called_with("/opt/service/cnc/sweat/destination/things", "w")
+        mock_open.assert_called_with("/opt/service/cnc/sweat/things", "w", encoding='utf-8')
         mock_write.write.assert_called_once_with("dest")
 
         mock_open.reset_mock()
@@ -107,7 +109,7 @@ class TestEngine(unittest.TestCase):
 
         self.machine.destination({"destination": "things", "replace": False}, "dest")
 
-        mock_open.assert_called_with("/opt/service/cnc/sweat/destination/things", "w")
+        mock_open.assert_called_with("/opt/service/cnc/sweat/things", "w", encoding='utf-8')
         mock_write.write.assert_called_once_with("dest")
 
         mock_open.reset_mock()
@@ -132,8 +134,8 @@ class TestEngine(unittest.TestCase):
         self.machine.copy({"source": "src", "destination": "dest"})
 
         mock_copy.assert_called_once_with(
-            "/opt/service/cnc/sweat/source/src",
-            "/opt/service/cnc/sweat/destination/dest"
+            "/opt/service/cnc/sweat/src",
+            "/opt/service/cnc/sweat/dest"
         )
 
     @unittest.mock.patch("os.path.exists")
@@ -158,7 +160,7 @@ class TestEngine(unittest.TestCase):
         self.machine.remove({"destination": "dest"})
 
         mock_rmtree.assert_called_once_with(
-            "/opt/service/cnc/sweat/destination/dest"
+            "/opt/service/cnc/sweat/dest"
         )
 
         # file
@@ -168,7 +170,7 @@ class TestEngine(unittest.TestCase):
         self.machine.remove({"destination": "dest"})
 
         mock_remove.assert_called_once_with(
-            "/opt/service/cnc/sweat/destination/dest"
+            "/opt/service/cnc/sweat/dest"
         )
 
     def test_text(self):
@@ -290,11 +292,11 @@ class TestEngine(unittest.TestCase):
         self.machine.mode({"source": "src", "destination": "dest"})
 
         mock_stat.assert_called_once_with(
-            "/opt/service/cnc/sweat/source/src"
+            "/opt/service/cnc/sweat/src"
         )
 
         mock_mode.assert_called_once_with(
-            "/opt/service/cnc/sweat/destination/dest",
+            "/opt/service/cnc/sweat/dest",
             "ala"
         )
 
@@ -440,8 +442,8 @@ class TestEngine(unittest.TestCase):
         self.machine.file(content, None)
 
         mock_copy.assert_called_once_with(
-            "/opt/service/cnc/sweat/source/a/b/c",
-            "/opt/service/cnc/sweat/destination/a/b/c"
+            "/opt/service/cnc/sweat/a/b/c",
+            "/opt/service/cnc/sweat/a/b/c"
         )
 
         # Remove
@@ -460,7 +462,7 @@ class TestEngine(unittest.TestCase):
         self.machine.file(content, None)
 
         mock_remove.assert_called_once_with(
-            "/opt/service/cnc/sweat/destination/a/b/c"
+            "/opt/service/cnc/sweat/a/b/c"
         )
 
         # Text
@@ -609,11 +611,11 @@ class TestEngine(unittest.TestCase):
         mock_write.write.assert_called_once_with('yep')
 
         mock_stat.assert_called_with(
-            "/opt/service/cnc/sweat/source/a/b/c"
+            "/opt/service/cnc/sweat/a/b/c"
         )
 
         mock_mode.assert_called_once_with(
-            "/opt/service/cnc/sweat/destination/a/b/c",
+            "/opt/service/cnc/sweat/a/b/c",
             "ala"
         )
 
@@ -681,8 +683,8 @@ class TestEngine(unittest.TestCase):
         self.machine.craft(content, None)
 
         mock_copy.assert_called_once_with(
-            "/opt/service/cnc/sweat/source/a/b/c",
-            "/opt/service/cnc/sweat/destination/a/b/c"
+            "/opt/service/cnc/sweat/a/b/c",
+            "/opt/service/cnc/sweat/a/b/c"
         )
 
         # Content
@@ -697,7 +699,7 @@ class TestEngine(unittest.TestCase):
 
         self.machine.craft = unittest.mock.MagicMock()
 
-        mock_glob.return_value = ["/opt/service/cnc/sweat/destination/a/b/c"]
+        mock_glob.return_value = ["/opt/service/cnc/sweat/a/b/c"]
         mock_isdir.return_value = False
 
         # Root source
@@ -778,7 +780,7 @@ class TestEngine(unittest.TestCase):
 
         self.machine.craft = unittest.mock.MagicMock()
 
-        mock_glob.return_value = ["/opt/service/cnc/sweat/destination/a/b/c"]
+        mock_glob.return_value = ["/opt/service/cnc/sweat/a/b/c"]
         mock_isdir.return_value = False
 
         # Converting
@@ -846,14 +848,14 @@ class TestEngine(unittest.TestCase):
         }, {"start": "a/b"})
 
 
-class TestJamurai(unittest.TestCase):
+class TestJamurai(sphinxter.unittest.TestCase):
 
     @unittest.mock.patch("os.path.isdir")
     @unittest.mock.patch("glob.glob")
     @unittest.mock.patch("jamurai.Machine.craft")
     def test_build(self, mock_craft, mock_glob, mock_isdir):
 
-        mock_glob.return_value = ["/opt/service/cnc/sweat/destination/a/b/c"]
+        mock_glob.return_value = ["/opt/service/cnc/sweat/a/b/c"]
         mock_isdir.return_value = False
 
         # Converting
@@ -919,3 +921,7 @@ class TestJamurai(unittest.TestCase):
             "preserve": ["k"],
             "transform": ["l"]
         }, {"start": "a/b"})
+
+    def test_module(self):
+
+        self.assertSphinxter(jamurai)

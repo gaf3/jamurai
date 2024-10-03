@@ -1,3 +1,79 @@
+"""
+description: |
+    Jijna wrapper for file and directory transformation and injection
+
+    As a single content::
+
+        import os
+        import yaml
+        import jamurai
+
+        with open("/tmp/from.txt", "w") as from_file:
+            from_file.write("{{ foo }}")
+
+        content = {
+            "source": "from.txt",
+            "destination": "to.txt"
+        }
+
+        values = {
+            "foo": "bar"
+        }
+
+        jamurai.build(content, values, "/tmp")
+
+        with open("/tmp/to.txt", "r") as to_file:
+            data = to_file.read()
+
+        data
+        # "bar"
+
+    For multiple content::
+
+        machine = jamurai.Machine("/tmp")
+
+        with open("/tmp/this.txt", "w") as from_file:
+            from_file.write("{{ this }}")
+
+        with open("/tmp/that.txt", "w") as from_file:
+            from_file.write("{{ that }}")
+
+        contents = [
+            {
+                "source": "this.txt",
+                "destination": "these.txt"
+            },
+            {
+                "source": "that.txt",
+                "destination": "those.txt"
+            }
+        ]
+
+        values = {
+            "this": "yin",
+            "that": "yang"
+        }
+
+        for content in contents:
+            machine.build(content, values)
+
+        with open("/tmp/these.txt", "r") as to_file:
+            data = to_file.read()
+
+        data
+        # "yin"
+
+        with open("/tmp/those.txt", "r") as to_file:
+            data = to_file.read()
+
+        data
+        # "yang"
+
+    Look at the content docs at the 'CnC Forge https://github.com/gaf3/cnc-forge/blob/main/Output.md#content'_
+
+    The only difference is the base is the same direcctory unlike transforming from one repo to enother.
+"""
+
 import os
 import glob
 import json
@@ -11,12 +87,35 @@ import yaes
 
 class Machine:
     """
-    Class that processes the transformation
+    Class for Jijna wrapper for file and directory transformation and injection
     """
 
-    def __init__(self, base='', skip=None, inject="jamurai", engine=None):
+    base = None     # base directory to transform files
+    " type: str "
+    skip = None     # list of files to skip for processing
+    " type: list "
+    inject = None   # keyword to inject text at (text:)
+    " type: str "
+    engine = None   # Yaes engine to use
+    " type: yaes.Engine "
+
+    def __init__(self,
+        base='',            # base directory to transform files
+        skip=None,          # list of files to skip for processing
+        inject="jamurai",   # keyword to inject text at (text:)
+        engine=None         # Yaes engine to use instead of the default
+    ):
         """
-        Store the daemon
+        parameters:
+            base:
+                type: str
+            skip:
+                type: list
+            base:
+                type: str
+            base:
+                type: yaes.Engine
+        more: Look to 'CnC Forge https://github.com/gaf3/cnc-forge/blob/main/Output.md#content'_ for more info.
         """
 
         self.base = base
@@ -84,7 +183,7 @@ class Machine:
         """
         Gets the relative path based on base and whether source or destnation
         """
-        return path.split(self.base, 1)[-1].split("/", 2)[-1]
+        return path.split(f"{self.base}/", 1)[-1]
 
     def source(self, content, path=False):
         """
@@ -94,25 +193,25 @@ class Machine:
         if isinstance(content['source'], dict):
             return content['source']['value']
 
-        source = os.path.abspath(f"{self.base}/source/{content['source']}")
+        source = os.path.abspath(f"{self.base}/{content['source']}")
 
-        if not source.startswith(f"{self.base}/source"):
+        if not source.startswith(f"{self.base}"):
             raise Exception(f"invalid path: {source}")
 
         if path:
             return source
 
-        with open(source, "r") as source_file:
+        with open(source, "r", encoding='utf-8') as source_file:
             return source_file.read()
 
-    def destination(self, content, data=None, path=False):
+    def destination(self, content, data=None, path=False): # pylint: disable=inconsistent-return-statements
         """
         Retrieve or store the content of a destination file
         """
 
-        destination = os.path.abspath(f"{self.base}/destination/{content['destination']}")
+        destination = os.path.abspath(f"{self.base}/{content['destination']}")
 
-        if not destination.startswith(f"{self.base}/destination"):
+        if not destination.startswith(f"{self.base}"):
             raise Exception(f"invalid path: {destination}")
 
         if path:
@@ -122,10 +221,10 @@ class Machine:
             return
 
         if data is None:
-            with open(destination, "r") as destination_file:
+            with open(destination, "r", encoding='utf-8') as destination_file:
                 return destination_file.read()
 
-        with open(destination, "w") as destination_file:
+        with open(destination, "w", encoding='utf-8') as destination_file:
             return destination_file.write(data)
 
     def copy(self, content):
@@ -363,9 +462,65 @@ class Machine:
 
         return places
 
-    def build(self, content, values):
+    def build(self,
+            content,            # What to transform, so
+            values,             # Yaes engine to use instead of the default
+        ):
         """
-        Bulids from a content
+        order: 0
+        description: Builds a content block
+        parameters:
+            content:
+                type: dict
+            values:
+                type: dict
+        usage: |
+
+            For multiple content::
+
+                import os
+                import yaml
+                import jamurai
+
+
+                machine = jamurai.Machine("/tmp")
+
+                with open("/tmp/this.txt", "w") as from_file:
+                    from_file.write("{{ this }}")
+
+                with open("/tmp/that.txt", "w") as from_file:
+                    from_file.write("{{ that }}")
+
+                contents = [
+                    {
+                        "source": "this.txt",
+                        "destination": "these.txt"
+                    },
+                    {
+                        "source": "that.txt",
+                        "destination": "those.txt"
+                    }
+                ]
+
+                values = {
+                    "this": "yin",
+                    "that": "yang"
+                }
+
+                for content in contents:
+                    machine.build(content, values)
+
+                with open("/tmp/these.txt", "r") as to_file:
+                    data = to_file.read()
+
+                data
+                # "yin"
+
+                with open("/tmp/those.txt", "r") as to_file:
+                    data = to_file.read()
+
+                data
+                # "yang"
         """
 
         # Transform exclude, include, preserve, and transforma and ensure they're lists
@@ -395,9 +550,56 @@ class Machine:
                     "destination": place
                 }, values)
 
-def build(content, values, base='', skip=None, inject="jamurai", engine=None):
+def build(
+    content,            # What to transform, so
+    values,             # Yaes engine to use instead of the default
+    base='',            # base directory to transform files
+    skip=None,          # list of files to skip for processing
+    inject="jamurai",   # keyword to inject text at (text:)
+    engine=None         # Yaes engine to use instead of the default
+):
     """
-    Bulids from a content
+    description: Builds a content block
+    parameters:
+        content:
+            type: dict
+        values:
+            type: dict
+        base:
+            type: str
+        skip:
+            type: list
+        base:
+            type: str
+        base:
+            type: yaes.Engine
+    usage: |
+
+        To process a single content block::
+
+            import os
+            import yaml
+            import jamurai
+
+            with open("/tmp/from.txt", "w") as from_file:
+                from_file.write("{{ foo }}")
+
+            content = {
+                "source": "from.txt",
+                "destination": "to.txt"
+            }
+
+            values = {
+                "foo": "bar"
+            }
+
+            jamurai.build(content, values, "/tmp")
+
+            with open("/tmp/to.txt", "r") as to_file:
+                data = to_file.read()
+
+            data
+            # "bar"
     """
 
     Machine(base, skip, inject, engine).build(content, values)
