@@ -1,5 +1,5 @@
 
 *.pyc
-lib/yaes.egg-info/
+lib/jamurai.egg-info/
 dep/
 docs/build
