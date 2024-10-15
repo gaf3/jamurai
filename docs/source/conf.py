@@ -9,7 +9,9 @@
 project = 'jamurai'
 copyright = '2023, George A. Fitch III (gaf3)'
 author = 'George A. Fitch III (gaf3)'
-release = '0.1.0'
+
+with open("../../VERSION", "r") as version_file:
+    release = version_file.read().strip()
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
