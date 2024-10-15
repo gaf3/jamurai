@@ -1,4 +1,4 @@
-FROM python:3.10.6-alpine3.16
+FROM python:3.13-alpine3.20
 
 RUN mkdir -p /opt/service
 
