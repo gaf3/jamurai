@@ -28,7 +28,7 @@ setup(
     download_url="https://github.com/gaf3/jamurai",
     author="Gaffer Fitch",
     author_email="jamurai@gaf3.com",
-    description="Jijna wrapper for file and directory transformation and injection",
+    description="Jinja wrapper for file and directory transformation and injection",
     long_description=long_description,
     license_files=('LICENSE.txt',),
     classifiers=[

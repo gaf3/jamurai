@@ -14,7 +14,7 @@ jamurai
 
 .. module:: jamurai
 
-Jijna wrapper for file and directory transformation and injection
+Jinja wrapper for file and directory transformation and injection
 
 As a single content::
 
@@ -133,7 +133,7 @@ The only difference is the base is the same direcctory unlike transforming from 
 
 .. class:: Machine(base='', skip=None, inject='jamurai', engine=None)
 
-    Class for Jijna wrapper for file and directory transformation and injection
+    Class for Jinja wrapper for file and directory transformation and injection
 
     :param base: base directory to transform files
     :type base: yaes.Engine

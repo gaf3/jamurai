@@ -1,6 +1,6 @@
 """
 description: |
-    Jijna wrapper for file and directory transformation and injection
+    Jinja wrapper for file and directory transformation and injection
 
     As a single content::
 
@@ -87,7 +87,7 @@ import yaes
 
 class Machine:
     """
-    Class for Jijna wrapper for file and directory transformation and injection
+    Class for Jinja wrapper for file and directory transformation and injection
     """
 
     base = None     # base directory to transform files

@@ -1,7 +1,7 @@
 jamurai
 =======
 
-Jijna wrapper for file and directory transformation and injection
+Jinja wrapper for file and directory transformation and injection
 
 As a single content::
 
