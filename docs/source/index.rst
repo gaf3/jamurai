@@ -224,116 +224,116 @@ The only difference is the base is the same direcctory unlike transforming from 
 
         Copies the content of source to desintation unchanged
 
-        :param content:
+        :param content: content
 
     .. method:: craft(content, values)
 
         Craft changes, the actual work of creating desitnations from sources
 
-        :param content:
-        :param values:
+        :param content: content
+        :param values: values
 
     .. method:: destination(content, data=None, path=False)
 
         Retrieve or store the content of a destination file
 
-        :param content:
-        :param data:
-        :param path:
+        :param content: content
+        :param data: data
+        :param path: path
 
     .. method:: directory(content, values)
 
         Craft a directory
 
-        :param content:
-        :param values:
+        :param content: content
+        :param values: values
 
     .. classmethod:: exclude(content)
 
         Exclude content from being copied from source to destination based on pattern
 
-        :param content:
+        :param content: content
 
     .. method:: file(content, values)
 
         Craft a file
 
-        :param content:
-        :param values:
+        :param content: content
+        :param values: values
 
     .. staticmethod:: json(source, destination, location, remove)
 
         Inserts destination into source at location if not present
 
-        :param source:
-        :param destination:
-        :param location:
-        :param remove:
+        :param source: source
+        :param destination: destination
+        :param location: location
+        :param remove: remove
 
     .. method:: mode(content)
 
         Have the desination mode match the source mode
 
-        :param content:
+        :param content: content
 
     .. classmethod:: place(content)
 
         Get either source of destination
 
-        :param content:
+        :param content: content
 
     .. method:: places(content, values)
 
         Expands a place to sources or desintations
 
-        :param content:
-        :param values:
+        :param content: content
+        :param values: values
 
     .. staticmethod:: placing(content)
 
         Get either source of destination
 
-        :param content:
+        :param content: content
 
     .. staticmethod:: preserve(content)
 
         Preserve content as is without transformation based on pattern
 
-        :param content:
+        :param content: content
 
     .. method:: relative(path)
 
         Gets the relative path based on base and whether source or destnation
 
-        :param path:
+        :param path: path
 
     .. method:: remove(content)
 
         Removes the content of desintation
 
-        :param content:
+        :param content: content
 
     .. method:: source(content, path=False)
 
         Retrieves the content of a source file
 
-        :param content:
-        :param path:
+        :param content: content
+        :param path: path
 
     .. method:: text(source, destination, location, remove)
 
         Inserts destination into source at location if not present
 
-        :param source:
-        :param destination:
-        :param location:
-        :param remove:
+        :param source: source
+        :param destination: destination
+        :param location: location
+        :param remove: remove
 
     .. staticmethod:: yaml(source, destination, location, remove)
 
         Inserts destination into source at location if not present
 
-        :param source:
-        :param destination:
-        :param location:
-        :param remove:
+        :param source: source
+        :param destination: destination
+        :param location: location
+        :param remove: remove
