@@ -75,6 +75,7 @@ description: |
 """
 
 import os
+import re
 import glob
 import json
 import yaml
@@ -118,7 +119,7 @@ class Machine:
         more: Look to 'CnC Forge https://github.com/gaf3/cnc-forge/blob/main/Output.md#content'_ for more info.
         """
 
-        self.base = base
+        self.base = re.split(r'/*$', base)[0]
         self.skip = skip or []
         self.inject = inject
         self.engine = engine or yaes.Engine(jinja2.Environment(keep_trailing_newline=True))
