@@ -22,8 +22,8 @@ class TestEngine(unittest.TestCase):
         self.assertEqual(init.skip, [])
         self.assertTrue(init.engine.env.keep_trailing_newline)
 
-        init = jamurai.Machine("people", "stuff", "jamonit", "things")
-        self.assertEqual(init.base, "people")
+        init = jamurai.Machine("/peo/ple//", "stuff", "jamonit", "things")
+        self.assertEqual(init.base, "/peo/ple")
         self.assertEqual(init.skip, "stuff")
         self.assertEqual(init.inject, "jamonit")
         self.assertEqual(init.engine, "things")
