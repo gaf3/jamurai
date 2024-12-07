@@ -482,10 +482,10 @@ class TestEngine(unittest.TestCase):
             "exclude": [],
             "preserve": [],
             "transform": [],
-            "text": "{{ there }}"
+            "text": "{[ {{ there }} ]}"
         }
 
-        self.machine.file(content, {"sure": "yep", "there": "here"})
+        self.machine.file(content, {"sure": "yep", "there": "a-b", "a-b": "here"})
 
         mock_write.write.assert_called_once_with("fee\nfie\nyep\n  # jamurai: here  \nfoe\nfum\n")
 
