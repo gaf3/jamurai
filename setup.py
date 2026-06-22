@@ -20,11 +20,11 @@ setup(
         'jamurai'
     ],
     install_requires=[
-        'Jinja2==3.1.2',
-        'overscore==0.1.2',
-        'yaes>=0.2.5',
-        'PyYAML==6.0.1',
-        'MarkupSafe==2.1.5'
+        'Jinja2>=3.1.6',
+        'overscore>=0.1.2',
+        'yaes>=0.2.6',
+        'PyYAML>=6.0.1',
+        'MarkupSafe>=2.1.5'
     ],
     url=f"https://jamurai.readthedocs.io/en/{version}/",
     download_url="https://github.com/gaf3/jamurai",

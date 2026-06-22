@@ -38,7 +38,8 @@ lint:
 
 setup:
 	docker run $(TTY) $(VOLUMES) $(PYPI) $(INSTALL) sh -c "cp -r /opt/service /opt/install && cd /opt/install/ && \
-	python setup.py install && \
+	pip install --upgrade pip && \
+	pip install . && \
 	python -m jamurai"
 
 tag:
